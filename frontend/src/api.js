@@ -4,7 +4,7 @@
  * to ensure that deployments on platforms like Vercel function smoothly.
  */
 
-import { DEMO_WATCHLISTS, DEMO_ITEMS, DEMO_GRAPH, getDemoAnalysis } from './demoFallback';
+import { DEMO_WATCHLISTS, DEMO_ITEMS, DEMO_GRAPH, DEMO_TOP_MOVERS, getDemoAnalysis } from './demoFallback';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
@@ -305,8 +305,10 @@ export async function fetchMarketTopMovers(limit = 6) {
     return await handleResponse(res, "Failed to fetch top movers");
   } catch (err) {
     return {
-      gainers: DEMO_ITEMS.filter(i => i.delta_pct > 0).slice(0, limit),
-      losers: DEMO_ITEMS.filter(i => i.delta_pct < 0).slice(0, limit)
+      movers: DEMO_TOP_MOVERS,
+      gainers: DEMO_TOP_MOVERS.gainers.slice(0, limit),
+      losers: DEMO_TOP_MOVERS.losers.slice(0, limit),
+      volume_spikes: DEMO_TOP_MOVERS.volume_spikes.slice(0, limit)
     };
   }
 }

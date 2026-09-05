@@ -80,14 +80,18 @@ export default function WatchlistTable({
             isLight ? 'divide-[#E5D6CE]/60' : 'divide-slate-800/50'
           }`}>
             {items.map((item, index) => {
-              const isPositive = item.price_delta_pct >= 0;
-              const isHighAttention = item.meaningful_change_score >= 70;
-              const isMediumAttention = item.meaningful_change_score >= 45 && item.meaningful_change_score < 70;
-              const displayTicker = item.ticker.replace('.NS', '');
+              const deltaPct = typeof item.price_delta_pct === 'number' ? item.price_delta_pct : (typeof item.delta_pct === 'number' ? item.delta_pct : 0);
+              const deltaAbs = typeof item.price_delta_abs === 'number' ? item.price_delta_abs : (typeof item.delta_price === 'number' ? item.delta_price : 0);
+              const currPrice = typeof item.current_price === 'number' ? item.current_price : (typeof item.price === 'number' ? item.price : 0);
+              const isPositive = deltaPct >= 0;
+              const mcs = item.meaningful_change_score || 0;
+              const isHighAttention = mcs >= 70;
+              const isMediumAttention = mcs >= 45 && mcs < 70;
+              const displayTicker = (item.display_ticker || item.ticker || '').replace('.NS', '');
 
               return (
                 <tr
-                  key={item.ticker}
+                  key={item.ticker || index}
                   className={`transition group ${
                     isHighAttention 
                       ? isLight ? 'bg-rose-50/50 hover:bg-rose-50' : 'bg-rose-950/10 hover:bg-rose-950/20'
@@ -141,7 +145,7 @@ export default function WatchlistTable({
                   <td className={`py-3.5 px-4 text-right font-mono font-semibold ${
                     isLight ? 'text-slate-900' : 'text-slate-100'
                   }`}>
-                    ₹{item.current_price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ₹{currPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
 
                   {/* Price Change */}
@@ -152,10 +156,10 @@ export default function WatchlistTable({
                         : isLight ? 'text-rose-700' : 'text-rose-400'
                     }`}>
                       {isPositive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                      <span>{isPositive ? '+' : ''}{item.price_delta_pct.toFixed(2)}%</span>
+                      <span>{isPositive ? '+' : ''}{deltaPct.toFixed(2)}%</span>
                     </div>
                     <div className={`text-[11px] font-mono ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
-                      {item.price_delta_abs > 0 ? '+' : ''}₹{item.price_delta_abs.toFixed(2)}
+                      {deltaAbs > 0 ? '+' : ''}₹{deltaAbs.toFixed(2)}
                     </div>
                   </td>
 

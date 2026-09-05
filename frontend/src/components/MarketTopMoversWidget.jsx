@@ -174,9 +174,13 @@ export default function MarketTopMoversWidget({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {list.map(stock => {
-            const isPositive = stock.change_pct >= 0;
             const inWatchlist = activeWatchlistTickers.includes(stock.ticker);
             const isJustAdded = addedMap[stock.ticker];
+
+            const priceVal = typeof stock.price === 'number' ? stock.price : (typeof stock.current_price === 'number' ? stock.current_price : 0);
+            const changeVal = typeof stock.change_pct === 'number' ? stock.change_pct : (typeof stock.price_delta_pct === 'number' ? stock.price_delta_pct : (typeof stock.delta_pct === 'number' ? stock.delta_pct : 0));
+            const isPositive = changeVal >= 0;
+            const displayTicker = (stock.display_ticker || stock.ticker || '').replace('.NS', '');
 
             return (
               <div
@@ -197,7 +201,7 @@ export default function MarketTopMoversWidget({
                             isLight ? 'text-slate-900 hover:text-blue-600' : 'text-white hover:text-blue-400'
                           }`}
                         >
-                          {stock.display_ticker}
+                          {displayTicker}
                           <span className={`text-[10px] font-normal ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>NSE</span>
                           <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 text-blue-500 transition" />
                         </button>
@@ -216,7 +220,7 @@ export default function MarketTopMoversWidget({
 
                     <div className="text-right font-mono">
                       <div className={`text-sm font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                        ₹{stock.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ₹{priceVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div className={`text-[11px] font-semibold flex items-center justify-end gap-0.5 ${
                         isPositive 
@@ -224,7 +228,7 @@ export default function MarketTopMoversWidget({
                           : isLight ? 'text-rose-700' : 'text-rose-400'
                       }`}>
                         {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
-                        <span>{isPositive ? '+' : ''}{stock.change_pct.toFixed(2)}%</span>
+                        <span>{isPositive ? '+' : ''}{changeVal.toFixed(2)}%</span>
                       </div>
                     </div>
                   </div>

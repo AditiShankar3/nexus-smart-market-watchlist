@@ -119,7 +119,7 @@ export default function Navbar({
                 isLight ? 'bg-[#E7EBEE] border-[#D2DCE4] text-slate-800' : 'bg-slate-800 border-slate-700 text-slate-200'
               }`}>
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span className="truncate max-w-[80px]">{currentUser.name.split(' ')[0]}</span>
+                <span className="truncate max-w-[80px]">{(currentUser?.name || currentUser?.username || "User").split(' ')[0]}</span>
                 <button onClick={onLogout} className="text-slate-400 hover:text-rose-500 ml-1">
                   <LogOut className="w-3 h-3" />
                 </button>
@@ -235,7 +235,7 @@ export default function Navbar({
             }`}>
               <div className="flex items-center gap-1.5 text-xs font-semibold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>{currentUser.name}</span>
+                <span>{currentUser?.name || currentUser?.username || "User"}</span>
               </div>
               <button
                 onClick={onLogout}
